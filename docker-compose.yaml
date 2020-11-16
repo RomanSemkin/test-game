@@ -45,3 +45,21 @@ services:
       - var_tic_tac_toe:/var/project
     command:
       /usr/local/bin/gunicorn  --bind 0.0.0.0:8080  tic_tac_toe.wsgi
+
+  init:
+    build:
+      context: tic_tac_toe
+      dockerfile: ../deploy/Dockerfile
+      target: prod
+    depends_on:
+      - tic_tac_toe
+      - main_db
+    networks:
+      - backend
+    env_file:
+      - .env
+    volumes:
+      - var_tic_tac_toe:/var/project
+    working_dir: /home/project/dist
+    command:
+      /home/projec/dist/manage.py migrate
